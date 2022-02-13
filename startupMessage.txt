@@ -1,0 +1,11 @@
+[${config>startup_colors>title_color}] _____  _____                           _   
+[${config>startup_colors>title_color}]|  __ \|  __ \                         | |  
+[${config>startup_colors>title_color}]| |__) | |__) | __ ___  _ __ ___  _ __ | |_ 
+[${config>startup_colors>title_color}]|  ___/|  ___/ '__/ _ \| '_ ` _ \| '_ \| __|
+[${config>startup_colors>title_color}]| |    | |   | | | (_) | | | | | | |_) | |_ 
+[${config>startup_colors>title_color}]|_|    |_|   |_|  \___/|_| |_| |_| .__/ \__|
+[${config>startup_colors>title_color}]                                 | |        
+[${config>startup_colors>title_color}]                                 |_|  
+
+Welcome to [${config>startup_colors>name_highlight}]PPrompt[$reset], [${config>startup_colors>username_color}]${env>username}[$reset]!
+Type [${config>startup_colors>help_highlight}]help[$reset] for a list of [${config>startup_colors>command_highlight}]commands[$reset].

@@ -1,13 +1,38 @@
+import * as fs from "fs/promises"
 import * as chalk from "chalk"
 import * as colors from "colors"
 import * as figlet from "figlet"
-export function colorize(text:string): string{
+import { Arguments } from "./argumentHandler"
+import { getConfig } from "./settings"
+export function colorize(text:string, vars?:boolean): string{
 	var out = text
-	var colorsReg = /\[([@!$^]?)(\w+|#[0-9a-fA-F])?\](.*)/g
+	var cfg = getConfig()
+	if(vars){
+		const varsReg = /\${((?:\w|>)+)}/g
+		var env = {
+			process:process,
+			env:process.env,
+			config:cfg
+		}
+		Object.keys(cfg.env_mask).forEach(key=>{
+			env.env[key] = cfg.env_mask[key]
+		})
+		out = out.replace(varsReg, (substr:string, ...args:string[])=>{
+			var value:any = env
+			var path = args[0]
+			var segments = path.split(">")
+			segments.forEach(seg=>{
+				value = value[seg]
+			})
+			return value.toString()
+		})
+	}
+	var colorsReg = /(?<!\\)\[([@!$^~]?)(\w+|#[0-9a-fA-F])?\](.*)/g
 	var stack = 0
 	while(out.match(colorsReg)){
 		stack++
-		out = out.replace(colorsReg, (substr, ...args)=>{
+		out = out.replace(colorsReg, (substr:string, ...args:string[])=>{
+			if(!cfg.allow_color)return args[2]
 			try{
 				var executor = args[0].includes("@") ? colors[args[1]] : (
 					args[0].includes("$") ? chalk[args[1]] : (
@@ -16,10 +41,62 @@ export function colorize(text:string): string{
 						)
 					)
 				)
-				return executor ? executor(args[2]) : substr
+				var thisOut = executor ? executor(args[2]) : substr
+				if(args[0].includes("~")){
+					if(executor){
+						var sub = args[1].slice(args[1].indexOf(":"), args[1].indexOf("]"))
+						console.log(sub)
+						executor(sub)
+					}else{
+						thisOut = substr
+					}
+				}
+				return thisOut
 			}catch(e){return substr}
 		})
 		if(stack == 1024)break
 	}
+	var escapeReg = /(?<=\\)\[/g
+	out = out.replace(escapeReg, "[")
 	return out
+}
+
+export function multiIncludes(arr:any[]|string, ...terms:string[]): boolean{
+	var doesInclude = false
+	terms.forEach(term=>{
+		doesInclude = doesInclude || arr.includes(term)
+	})
+	return doesInclude
+}
+
+export async function handleHelp(args:Arguments){
+	if(multiIncludes(args.flags, "help", "h")){
+		var file = (await fs.readFile("commands/help/"+args.command+".txt")).toString()
+		var lines = file.split("\n")
+		lines.forEach(ln=>{
+			console.log(colorize(ln))
+		})
+		return true
+	}
+	return false
+}
+
+export function expectArgs(amt:number, args:Arguments, exact?:boolean){
+	var match = (args.arguments.length >= amt && !exact) || (args.arguments.length == amt && exact)
+	if(!match){
+		console.error(`Command "${args.command}" expects ${!exact ? "at least " : ""}${amt} arguments, got ${args.arguments.length}`)
+	}
+	return match
+}
+
+export function verboseString(data:any): string{
+	if(typeof data !== "object"){
+		return data.toString()
+	}else{
+		return JSON.stringify(data, null, "\t")
+	}
+}
+export function toRight(text:string): string{
+	if(!process.stdout.columns)return text
+	return " ".repeat(process.stdout.columns-text.length)+text
 }

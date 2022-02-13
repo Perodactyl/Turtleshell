@@ -1,6 +1,8 @@
 import inputHandler from "./inputHandler"
 import { synchronizeOptions } from "./settings"
-
-synchronizeOptions()
+import { readFileSync } from "fs"
+import { colorize } from "./lib"
 console.clear()
+synchronizeOptions()
+console.log(colorize(readFileSync("startupMessage.txt").toString(), true))
 inputHandler()

@@ -1,0 +1,6 @@
+[yellow]set \[-e] \[-l] \[-d] setting value
+	-e, --env 		|		Whether to set an environment variable or an option for pprompt
+	-l, --list		|		Lists [~cyan:all] options, their [~cyan:current value], and their [~cyan:default]
+	-d, --default	|		Resets all options to default
+	-r, --reset		|		Alias of -d
+	-t, --trim		|		Remove properties that don't have default values (extra unused properties)
