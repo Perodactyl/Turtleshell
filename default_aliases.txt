@@ -1,0 +1,3 @@
+dir	ll
+ls	ll
+quit	exit

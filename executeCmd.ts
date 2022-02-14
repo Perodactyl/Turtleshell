@@ -4,20 +4,32 @@ import * as stream from "stream"
 export default function exec(
 	command:string,
 	line:CmdLine="cmd",
-	stdout?:stream.Writable,
-	stderr?:stream.Writable
+	stdout?:stream.Duplex,
+	stdin?:stream.Duplex,
+	stderr?:stream.Duplex
 ){ //Run a process with a command line
+	var input  = stdin || null
 	var output = stdout || null
 	var err =	 stderr || null
-	var p = cp.exec(command,{
-		"shell":`C:/Windows/System32/${line}.exe`
-	})
-	if(output)	p.stdout.pipe(output)
-	if(err)		p.stderr.pipe(err)
-	return {
-		output:output,
-		err:err,
-		process:p
-	}
+	var p = cp.execSync(`start /B "" "${command}"`)
+	return p.toString()
+	// if(input){
+	// 	input.pipe(p.stdin)
+	// }
+	// if(output)	p.stdout.pipe(output)
+	// if(err)		p.stderr.pipe(err)
+	// process.stdin["stopListening"] = true
+	// p.on("exit", (code)=>{
+	// 	input.unpipe(p.stdin)
+	// 	p.stdout.unpipe(stdout)
+	// 	p.stderr.unpipe(stderr)
+	// 	process.stdin["stopListening"] = false
+	// })
+	// return {
+	// 	input:input,
+	// 	output:output,
+	// 	err:err,
+	// 	process:p
+	// }
 }
 type CmdLine = "cmd" | "bash"

@@ -74,6 +74,7 @@ export async function handleHelp(args:Arguments){
 		var file = (await fs.readFile("commands/help/"+args.command+".txt")).toString()
 		var lines = file.split("\n")
 		lines.forEach(ln=>{
+			if(ln.startsWith(">"))return
 			console.log(colorize(ln))
 		})
 		return true
@@ -99,4 +100,12 @@ export function verboseString(data:any): string{
 export function toRight(text:string): string{
 	if(!process.stdout.columns)return text
 	return " ".repeat(process.stdout.columns-text.length)+text
+}
+
+export function tabify(text:string, tabs:number): string{
+	return text + " ".repeat(Math.max(0, tabs*4 - text.length))
+}
+
+export function getCwd(): string{
+	return process["wd"] || process.cwd()
 }

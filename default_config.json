@@ -7,8 +7,10 @@
 		"help_highlight":"orange",
 		"command_highlight":"cyan"
 	},
+	"wd_template":"[orange]%d[$reset]>",
 	"allow_color":true,
 	"env_mask":{
 		
-	}
+	},
+	"show_wd":false
 }

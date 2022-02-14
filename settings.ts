@@ -32,12 +32,15 @@ export function modifyOptions(key:string, value:JSONValue){
 	try{
 		var obj:JSONValue = cf
 		var split = key.split(".")
-		console.log(split)
 		split.slice(0, -1).forEach(seg=>{ //Every element except the last one.
 			console.log(obj, obj[seg])
 			obj = obj[seg]
 		})
-		obj[split[split.length-1]] = value
+		if(value !== "undefined"){
+			obj[split[split.length-1]] = value
+		}else{
+			delete obj[split[split.length-1]]
+		}
 		fs.writeFileSync("config.json", JSON.stringify(cf, null, "\t"))
 	}catch(e){
 		console.error(chalk.red("Failed to get property."))

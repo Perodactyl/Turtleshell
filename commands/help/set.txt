@@ -1,6 +1,10 @@
+>#set [-e] [-l] [-d] setting value
+>@Sets a configuration setting to the specified value
 [yellow]set \[-e] \[-l] \[-d] setting value
-	-e, --env 		|		Whether to set an environment variable or an option for pprompt
-	-l, --list		|		Lists [~cyan:all] options, their [~cyan:current value], and their [~cyan:default]
-	-d, --default	|		Resets all options to default
-	-r, --reset		|		Alias of -d
-	-t, --trim		|		Remove properties that don't have default values (extra unused properties)
+	-e, --env         |        Whether to set an environment variable or an option for pprompt
+	-l, --list        |        Lists [~cyan:all] options, their [~cyan:current value], and their [~cyan:default]
+	-d, --default     |        Resets all options to default
+	-r, --reset       |        Alias of -d
+	-t, --trim        |        Remove properties that don't have default values (extra unused properties)
+
+Setting a value to undefined deletes it.

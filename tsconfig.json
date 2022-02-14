@@ -1,6 +1,9 @@
 {
 	"compilerOptions": {
 		"watch": true,
-		"outDir": "build"
+		"outDir": "build",
+		"target": "ESNext",
+		"module": "CommonJS",
+		"moduleResolution": "node"
 	},
 }
