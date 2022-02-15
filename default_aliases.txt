@@ -1,3 +1,4 @@
 dir	ll
 ls	ll
 quit	exit
+cls	clear

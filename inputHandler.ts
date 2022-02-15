@@ -1,7 +1,7 @@
 import handleArguments, { Arguments } from "./argumentHandler"
 import loadCommands from "./loadcmdlist"
 import * as chalk from "chalk"
-import { colorize, expectArgs, getCwd, handleHelp } from "./lib"
+import { colorize, expectArgs, getCwd, handleHelp, readAliasFile } from "./lib"
 import { getConfig } from "./settings"
 import { readFile, writeFile } from "fs/promises"
 
@@ -25,17 +25,7 @@ export default async function startListening(){
 		var cmd = args.command
 		var commandExists = Object.keys(commands).includes(args.command)
 		if(!commandExists){
-			var  aliasesFile = ""
-			try{
-				aliasesFile = (await readFile("aliases.txt")).toString()
-			}catch(e){
-				aliasesFile = (await readFile("default_aliases.txt")).toString()
-				await writeFile("aliases.txt", aliasesFile)
-				console.log("No aliases file found. Cloning default.")
-			}
-			const aliasesArr = aliasesFile.replace(/\r/g,"").split("\n").map(ln=>ln.split("\t"))
-			const aliasesObj = {}
-			aliasesArr.forEach(el=>aliasesObj[el[0]] = el[1])
+			var  aliasesObj = await readAliasFile(true)
 			if(Object.keys(aliasesObj).includes(args.command)){
 				cmd = aliasesObj[args.command]
 			}else{

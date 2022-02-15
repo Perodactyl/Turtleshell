@@ -4,6 +4,7 @@ import * as colors from "colors"
 import * as figlet from "figlet"
 import { Arguments } from "./argumentHandler"
 import { getConfig, JSONFile, JSONValue } from "./settings"
+
 export function colorize(text:string, vars?:boolean): string{
 	var out = text
 	var cfg = getConfig()
@@ -177,4 +178,24 @@ export function strToPossibleBool(val:string):string | boolean{
 		return (val == "true")
 	}
 	return val
+}
+
+export async function readAliasFile(parse?:false): Promise<string>
+export async function readAliasFile(parse:true): Promise<Object>
+export async function readAliasFile(parse?:boolean): Promise<string | Object>{
+	var aliasesFile
+	try{
+		aliasesFile = (await fs.readFile("aliases.txt")).toString()
+	}catch(e){
+		aliasesFile = (await fs.readFile("default_aliases.txt")).toString()
+		await fs.writeFile("aliases.txt", aliasesFile)
+		console.log("No aliases file found. Cloning default.")
+	}
+	if(parse){
+		const aliasesArr = aliasesFile.replace(/\r/g,"").split("\n").map(ln=>ln.split("\t"))
+		const aliasesObj = {}
+		aliasesArr.forEach(el=>aliasesObj[el[0]] = el[1])
+		return aliasesObj
+	}
+	return aliasesFile
 }
