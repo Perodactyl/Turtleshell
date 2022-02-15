@@ -33,7 +33,6 @@ export function modifyOptions(key:string, value:JSONValue){
 		var obj:JSONValue = cf
 		var split = key.split(".")
 		split.slice(0, -1).forEach(seg=>{ //Every element except the last one.
-			console.log(obj, obj[seg])
 			obj = obj[seg]
 		})
 		if(value !== "undefined"){
@@ -76,4 +75,4 @@ function getJSON(path:string): JSONFile{
 export type JSONFile = {
 	[key:string]:JSONValue
 }
-export type JSONValue = string | boolean | number | JSONFile | JSONValue[]
+export type JSONValue = any //string | boolean | number | JSONFile | JSONValue[]

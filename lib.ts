@@ -3,7 +3,7 @@ import * as chalk from "chalk"
 import * as colors from "colors"
 import * as figlet from "figlet"
 import { Arguments } from "./argumentHandler"
-import { getConfig } from "./settings"
+import { getConfig, JSONFile, JSONValue } from "./settings"
 export function colorize(text:string, vars?:boolean): string{
 	var out = text
 	var cfg = getConfig()
@@ -108,4 +108,69 @@ export function tabify(text:string, tabs:number): string{
 
 export function getCwd(): string{
 	return process["wd"] || process.cwd()
+}
+
+export function readChalkColor(color:string): chalk.Chalk{
+	if(color.startsWith("#")){
+		return chalk.hex(color)
+	}else if(color.match(/^....?\(.+\)/)){
+		var match = color.match(/(...)\((\d+),\s*(\d+),\s*(\d+)\)/)
+		var type = match[1]
+		var r = Number(match[2])
+		var g = Number(match[3])
+		var b = Number(match[4])
+		return chalk[type](r, g, b)
+	}else{
+		return chalk.keyword(color)
+	}
+}
+
+export async function recursiveList(data:JSONValue, stack:number, depth:number){
+	const cfg = await getConfig()
+	if(typeof data === "object"){
+		for(var key in data){
+			if(typeof data[key] === "object"){
+				await log(key, "", depth, cfg)
+				await recursiveList(data[key], stack-1, depth+1)
+			}else{
+				await log(key, data[key], depth, cfg)
+			}
+		}
+	}
+}
+async function log(key, val, depth, cfg?:JSONFile){
+	cfg = cfg || await getConfig()
+	var emphasize = false
+	try{
+		if(!val.toString().trim()){
+			key = readChalkColor(cfg.tree_colors.obj)(key)
+		}else{
+			key = readChalkColor(cfg.tree_colors.key)(key)
+		}
+		if(val.toString().trim()){
+			if(typeof val === "boolean"){
+				emphasize = true
+				val = readChalkColor(cfg.tree_colors.bool)(val.toString())
+			}else if(typeof val === "number"){
+				emphasize = true
+				val = readChalkColor(cfg.tree_colors.num)(val.toString())
+			}else if(typeof val === "string"){
+				emphasize = true
+				val = readChalkColor(cfg.tree_colors.str)(`"${val}"`)
+			}
+		}
+		if(emphasize){
+			val = chalk[cfg.emphasis_effect?.toString()](val)
+		}
+	}catch(e){
+		if(cfg.debug_mode)console.error(e)
+		val = chalk.bold.bgMagenta.grey(val)
+	}
+	console.log("\t".repeat(depth)+key+":"+val)
+}
+export function strToPossibleBool(val:string):string | boolean{
+	if(val == "true" || val == "false"){
+		return (val == "true")
+	}
+	return val
 }

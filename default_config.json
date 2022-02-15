@@ -12,5 +12,14 @@
 	"env_mask":{
 		
 	},
-	"show_wd":false
+	"show_wd":true,
+	"tree_colors": {
+		"bool": "#ff50ff",
+		"str": "#90ff70",
+		"num": "#ff8080",
+		"obj": "#9090ff",
+		"key": "#7070ff"
+	},
+	"emphasis_effect":"bold",
+	"tab_size":4
 }

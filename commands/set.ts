@@ -1,11 +1,19 @@
 import { Arguments } from "../argumentHandler";
-import { handleHelp, multiIncludes, expectArgs, colorize } from "../lib";
-import { JSONValue, modifyOptions, resetOptions, trimOptions } from "../settings";
+import { handleHelp, multiIncludes, expectArgs, colorize, recursiveList } from "../lib";
+import { getConfig, JSONFile, JSONValue, modifyOptions, resetOptions, trimOptions } from "../settings";
+import * as chalk from "chalk"
 
 export default async function set(args:Arguments){
 //	const env = multiIncludes(args.flags, "env", "e")
 	const reset = multiIncludes(args.flags, "reset", "r", "default", "d")
 	const trim = multiIncludes(args.flags, "t", "trim")
+	const get = multiIncludes(args.flags, "g", "get", "read")
+	if(get){
+		console.log("Listing config options.")
+		const config = await getConfig()
+		await recursiveList(config, 1024, 0)
+		return
+	}
 	if(!reset && !trim && !expectArgs(2, args, true))return
 	if(reset){
 		console.log(colorize("[red]Setting all options to default."))
