@@ -22,7 +22,7 @@
 	},
 	"emphasis_effect":"bold",
 	"tab_size":4,
-	"terminal_name":"PPrompt",
+	"terminal_name":"Turtleshell",
 	"title_font":"big",
 	"elements_per_list_page":32
 }
