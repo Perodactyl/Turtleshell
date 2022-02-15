@@ -19,7 +19,11 @@ export default async function figlet(args:Arguments){
 		console.log(`\nType "figlet -g ${page+2}" for more.`)
 		return
 	}
+	try{
 	var font = args.arguments[0]
 	var text = args.arguments.slice(1).join(" ")
 	console.log(textSync(text, {font:font}))
+	}catch(e){
+		console.log("Font not found.")
+	}
 }
