@@ -102,15 +102,19 @@ export function toRight(text:string): string{
 	return " ".repeat(process.stdout.columns-text.length)+text
 }
 
-export function tabify(text:string, tabs:number): string{
-	return text + " ".repeat(Math.max(0, tabs*4 - text.length))
+export function tabify(text:string, tabs:number, character:string=" "): string{
+	return text + character.repeat(Math.max(0, tabs*4 - text.length))
 }
 
 export function getCwd(): string{
 	return process["wd"] || process.cwd()
 }
 
-export function readChalkColor(color:string): chalk.Chalk{
+export async function readChalkColor(color:string): Promise<chalk.Chalk|Function>{
+	const cfg = await getConfig()
+	if(!cfg.allow_color){
+		return (text)=>text
+	}
 	if(color.startsWith("#")){
 		return chalk.hex(color)
 	}else if(color.match(/^....?\(.+\)/)){
@@ -143,20 +147,20 @@ async function log(key, val, depth, cfg?:JSONFile){
 	var emphasize = false
 	try{
 		if(!val.toString().trim()){
-			key = readChalkColor(cfg.tree_colors.obj)(key)
+			key = (await readChalkColor(cfg.tree_colors.obj))(key)
 		}else{
-			key = readChalkColor(cfg.tree_colors.key)(key)
+			key = (await readChalkColor(cfg.tree_colors.key))(key)
 		}
 		if(val.toString().trim()){
 			if(typeof val === "boolean"){
 				emphasize = true
-				val = readChalkColor(cfg.tree_colors.bool)(val.toString())
+				val = (await readChalkColor(cfg.tree_colors.bool))(val.toString())
 			}else if(typeof val === "number"){
 				emphasize = true
-				val = readChalkColor(cfg.tree_colors.num)(val.toString())
+				val = (await readChalkColor(cfg.tree_colors.num))(val.toString())
 			}else if(typeof val === "string"){
 				emphasize = true
-				val = readChalkColor(cfg.tree_colors.str)(`"${val}"`)
+				val = (await readChalkColor(cfg.tree_colors.str))(`"${val}"`)
 			}
 		}
 		if(emphasize){
