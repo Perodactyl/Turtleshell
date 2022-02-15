@@ -21,5 +21,7 @@
 		"key": "#7070ff"
 	},
 	"emphasis_effect":"bold",
-	"tab_size":4
+	"tab_size":4,
+	"terminal_name":"PPrompt",
+	"title_font":"big"
 }

@@ -5,7 +5,7 @@ import * as figlet from "figlet"
 import { Arguments } from "./argumentHandler"
 import { getConfig, JSONFile, JSONValue } from "./settings"
 
-export function colorize(text:string, vars?:boolean): string{
+export function colorize(text:string, vars?:boolean, envAdditions?:Object): string{
 	var out = text
 	var cfg = getConfig()
 	if(vars){
@@ -13,7 +13,8 @@ export function colorize(text:string, vars?:boolean): string{
 		var env = {
 			process:process,
 			env:process.env,
-			config:cfg
+			config:cfg,
+			...envAdditions
 		}
 		Object.keys(cfg.env_mask).forEach(key=>{
 			env.env[key] = cfg.env_mask[key]
