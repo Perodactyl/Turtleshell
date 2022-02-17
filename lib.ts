@@ -200,3 +200,12 @@ export async function readAliasFile(parse?:boolean): Promise<string | Object>{
 	}
 	return aliasesFile
 }
+export async function showTitle(firstLine?:boolean){
+	const config = await getConfig()
+	var file = colorize((await fs.readFile("startupMessage.txt")).toString(), true)
+	if(firstLine)file = file.split("\n")[0]
+	file = file.replace("%ft", (await readChalkColor(config.startup_colors.title_color))(figlet.textSync(config.terminal_name, {
+		font:config.title_font
+	})))
+	console.log(file)
+}
